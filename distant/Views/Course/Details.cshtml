@@ -1,0 +1,65 @@
+﻿@model distant.Models.Course
+
+@{
+    ViewData["Title"] = Model.Name;
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="display-5">Курс: @Model.Name</h2>
+    <hr class="mb-4" />
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100 border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📚 Материалы лекций</h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    @if (Model.Lectures.Any())
+                    {
+                        @foreach (var lecture in Model.Lectures)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <span class="fs-5">@lecture.Title</span>
+                                <a asp-action="ReadLecture" asp-route-id="@lecture.Id" class="btn btn-outline-primary btn-sm">Читать</a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="list-group-item text-muted p-3">Лекции в разработке...</li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100 border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">📝 Проверка знаний</h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    @if (Model.Tests.Any())
+                    {
+                        @foreach (var test in Model.Tests)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <span class="fs-5">@test.Title</span>
+                                <a asp-controller="Test" asp-action="PassTest" asp-route-id="@test.Id" class="btn btn-success btn-sm">Пройти тест</a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="list-group-item text-muted p-3">Тесты пока не добавлены...</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-secondary">← Назад к списку курсов</a>
+    </div>
+</div>

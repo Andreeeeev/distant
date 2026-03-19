@@ -1,0 +1,61 @@
+﻿@model IEnumerable<distant.Models.Result>
+
+@{
+    ViewData["Title"] = "Журнал оценок";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2 class="mt-4 mb-4">Мой журнал оценок</h2>
+
+@if (ViewBag.AverageGrades != null && ViewBag.AverageGrades.Count > 0)
+{
+    <div class="card mb-4 border-info shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">📈 Твоя успеваемость (Средний балл)</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var avg in ViewBag.AverageGrades)
+                {
+                    <div class="col-md-4 mb-2">
+                        <div class="p-3 border rounded bg-light d-flex justify-content-between align-items-center">
+                            <span>@avg.Key</span>
+                            <span class="badge bg-primary fs-6">@avg.Value</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Курс</th>
+            <th>Тест</th>
+            <th>Оценка (Баллы)</th>
+            <th>Дата прохождения</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            @foreach (var result in Model)
+            {
+                <tr>
+                    <td class="align-middle">@result.Test.Course.Name</td>
+                    <td class="align-middle">@result.Test.Title</td>
+                    <td class="align-middle"><strong>@result.Score</strong></td>
+                    <td class="align-middle">@result.AttemptDate.ToString("dd.MM.yyyy HH:mm")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted p-4">Вы пока не прошли ни одного теста.</td>
+            </tr>
+        }
+    </tbody>
+</table>

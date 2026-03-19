@@ -1,0 +1,39 @@
+﻿@model IEnumerable<distant.Models.Course>
+
+@{
+    ViewData["Title"] = "Доступные курсы";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h2 class="mt-4 mb-4">Список курсов</h2>
+
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="thead-light" style="background-color: #f8f9fa;">
+            <tr>
+                <th>Название предмета</th>
+                <th style="width: 200px;" class="text-center">Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var course in Model)
+                {
+                    <tr>
+                        <td class="align-middle fs-5">@course.Name</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary">Перейти к курсу</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2" class="text-center text-muted p-4">Курсы пока не добавлены.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

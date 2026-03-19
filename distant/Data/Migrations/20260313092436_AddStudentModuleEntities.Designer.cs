@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using distant.Data;
 
@@ -11,9 +12,11 @@ using distant.Data;
 namespace distant.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260313092436_AddStudentModuleEntities")]
+    partial class AddStudentModuleEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -267,43 +270,6 @@ namespace distant.Data.Migrations
                     b.ToTable("Lectures");
                 });
 
-            modelBuilder.Entity("distant.Models.Question", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CorrectOption")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Option1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Option2")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Option3")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TestId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TestId");
-
-                    b.ToTable("Questions");
-                });
-
             modelBuilder.Entity("distant.Models.Result", b =>
                 {
                     b.Property<int>("Id")
@@ -416,17 +382,6 @@ namespace distant.Data.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("distant.Models.Question", b =>
-                {
-                    b.HasOne("distant.Models.Test", "Test")
-                        .WithMany("Questions")
-                        .HasForeignKey("TestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Test");
-                });
-
             modelBuilder.Entity("distant.Models.Result", b =>
                 {
                     b.HasOne("distant.Models.Test", "Test")
@@ -458,8 +413,6 @@ namespace distant.Data.Migrations
 
             modelBuilder.Entity("distant.Models.Test", b =>
                 {
-                    b.Navigation("Questions");
-
                     b.Navigation("Results");
                 });
 #pragma warning restore 612, 618

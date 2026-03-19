@@ -1,0 +1,31 @@
+﻿@model distant.Models.Lecture
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4 mb-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light p-3 rounded shadow-sm">
+            <li class="breadcrumb-item"><a asp-action="Index">Курсы</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.CourseId">@Model.Course?.Name</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <h2 class="mt-4 mb-3 text-primary">@Model.Title</h2>
+    <hr />
+
+    <div class="p-4 bg-white border rounded shadow-sm fs-5" style="line-height: 1.8;">
+        @Model.Content
+    </div>
+
+    <div class="mt-5 d-flex justify-content-between">
+        <a asp-action="Details" asp-route-id="@Model.CourseId" class="btn btn-secondary">← Вернуться к содержанию курса</a>
+
+        <a asp-action="DownloadLecture" asp-route-id="@Model.Id" class="btn btn-success">
+            📄 Скачать лекцию (.txt)
+        </a>
+    </div>
+</div>
