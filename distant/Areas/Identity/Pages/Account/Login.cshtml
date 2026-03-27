@@ -1,0 +1,41 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4" style="color: var(--color-dark-blue);">Вход в систему</h2>
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email" class="text-muted">Email (Почта)</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password" class="text-muted">Пароль</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="mb-4 ms-1">
+                            <label asp-for="Input.RememberMe" class="form-check-label text-muted">
+                                <input class="form-check-input me-2" asp-for="Input.RememberMe" />
+                                Запомнить меня?
+                            </label>
+                        </div>
+                        <button id="login-submit" type="submit" class="btn btn-primary w-100 btn-lg mb-3">Войти</button>
+
+                        <div class="text-center mt-3">
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-underline">Зарегистрироваться как новый ученик</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

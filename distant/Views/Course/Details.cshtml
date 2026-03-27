@@ -5,15 +5,41 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
+@{
+    var passedTests = ViewBag.PassedTestIds as List<int> ?? new List<int>();
+    bool isCompleted = ViewBag.IsCourseCompleted ?? false;
+    bool allTestsPassed = Model.Tests.Any() && Model.Tests.All(t => passedTests.Contains(t.Id));
+}
+
 <div class="container mt-4">
     <h2 class="display-5">Курс: @Model.Name</h2>
     <hr class="mb-4" />
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning shadow-sm">
+            @TempData["WarningMessage"]
+        </div>
+    }
+    <div class="mb-4">
+        @if (isCompleted)
+        {
+            <button class="btn btn-success disabled"> Курс успешно завершен</button>
+        }
+        else if (allTestsPassed)
+        {
+            <a asp-action="FinishCourse" asp-route-id="@Model.Id" class="btn btn-finish-course"> Завершить курс</a>
+        }
+        else
+        {
+            <button class="btn btn-secondary disabled"> Пройдите все тесты для завершения</button>
+        }
+    </div>
 
     <div class="row">
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100 border-primary">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">📚 Материалы лекций</h4>
+                    <h4 class="mb-0">Материалы лекций</h4>
                 </div>
                 <ul class="list-group list-group-flush">
                     @if (Model.Lectures.Any())
@@ -37,7 +63,7 @@
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100 border-success">
                 <div class="card-header bg-success text-white">
-                    <h4 class="mb-0">📝 Проверка знаний</h4>
+                    <h4 class="mb-0">Проверка знаний</h4>
                 </div>
                 <ul class="list-group list-group-flush">
                     @if (Model.Tests.Any())
@@ -46,7 +72,18 @@
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <span class="fs-5">@test.Title</span>
-                                <a asp-controller="Test" asp-action="PassTest" asp-route-id="@test.Id" class="btn btn-success btn-sm">Пройти тест</a>
+                                @if (passedTests.Contains(test.Id))
+                                {
+                                    <span class="badge bg-success fs-6">Сдан</span>
+                                }
+                                else if (isCompleted)
+                                {
+                                    <span class="badge bg-secondary fs-6">Курс закрыт</span>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Test" asp-action="PassTest" asp-route-id="@test.Id" class="btn btn-success btn-sm">Пройти тест</a>
+                                }
                             </li>
                         }
                     }

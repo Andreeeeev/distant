@@ -7,11 +7,12 @@
 
 <h2 class="mt-4 mb-4">Мой журнал оценок</h2>
 
+
 @if (ViewBag.AverageGrades != null && ViewBag.AverageGrades.Count > 0)
 {
     <div class="card mb-4 border-info shadow-sm">
         <div class="card-header bg-info text-white">
-            <h5 class="mb-0">📈 Твоя успеваемость (Средний балл)</h5>
+            <h5 class="mb-0"> Твоя успеваемость (Средний балл)</h5>
         </div>
         <div class="card-body">
             <div class="row">
@@ -28,6 +29,39 @@
         </div>
     </div>
 }
+
+<div class="card shadow-sm mb-4 bg-light border-0 p-3">
+    <form method="get" asp-action="Index" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label text-muted small">Фильтр по курсу</label>
+            <select name="courseId" class="form-select">
+                <option value="">-- Все курсы --</option>
+                @foreach (var c in ViewBag.Courses)
+                {
+                    if (ViewBag.SelectedCourse == c.Id)
+                    {
+                        <option value="@c.Id" selected>@c.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label text-muted small">Дата от:</label>
+            <input type="date" name="dateFrom" class="form-control" value="@ViewBag.DateFrom" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label text-muted small">Дата до:</label>
+            <input type="date" name="dateTo" class="form-control" value="@ViewBag.DateTo" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Поиск</button>
+        </div>
+    </form>
+</div>
 
 <table class="table table-bordered table-striped">
     <thead class="thead-dark">
