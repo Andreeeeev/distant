@@ -42,7 +42,7 @@ namespace distant.Controllers
 
         // 2. Логика подсчета баллов (сюда придут ответы студента)
         [HttpPost]
-        public async Task<IActionResult> SubmitTest(int testId, Dictionary<int, string> answers)
+        public async Task<IActionResult> SubmitTest(int testId, Dictionary<int, string[]> answers)
         {
             var test = await _context.Tests
                 .Include(t => t.Questions)
@@ -55,33 +55,43 @@ namespace distant.Controllers
 
             foreach (var question in test.Questions)
             {
-                if (answers.ContainsKey(question.Id) && !string.IsNullOrWhiteSpace(answers[question.Id]))
+                if (answers.ContainsKey(question.Id))
                 {
-                    string studentAnswer = answers[question.Id].Trim();
-                    string correctAnswer = question.CorrectAnswerText.Trim();
+                    var rawAnswer = answers[question.Id];
 
-                    switch (question.QuestionType)
+                    // Если пришла пустота - делаем пустой массив
+                    if (rawAnswer == null) rawAnswer = new string[0];
+
+                    // склеиваем ["1", "2"] в строку "1,2"
+                    string studentAnswer = string.Join(",", rawAnswer).Trim();
+
+                    if (!string.IsNullOrWhiteSpace(studentAnswer))
                     {
-                        case 0: // Один верный ответ
-                            if (studentAnswer == correctAnswer) correctAnswers++;
-                            break;
+                        string correctAnswer = question.CorrectAnswerText.Trim();
 
-                        case 1: // Несколько верных ответов (приходят через запятую, например "1,3")
+                        switch (question.QuestionType)
+                        {
+                            case 0: // Один верный ответ
+                                if (studentAnswer == correctAnswer) correctAnswers++;
+                                break;
+
+                            case 1: // Несколько верных ответов (приходят через запятую, например "1,3")
                                 // Сортируем ответы, чтобы "1,3" и "3,1" считались одинаково верными
-                            var studentAnsList = studentAnswer.Split(',').Select(a => a.Trim()).OrderBy(a => a);
-                            var correctAnsList = correctAnswer.Split(',').Select(a => a.Trim()).OrderBy(a => a);
+                                var studentAnsList = studentAnswer.Split(',').Select(a => a.Trim()).OrderBy(a => a);
+                                var correctAnsList = correctAnswer.Split(',').Select(a => a.Trim()).OrderBy(a => a);
 
-                            if (studentAnsList.SequenceEqual(correctAnsList)) correctAnswers++;
-                            break;
+                                if (studentAnsList.SequenceEqual(correctAnsList)) correctAnswers++;
+                                break;
 
-                        case 2: // Текст: Точное совпадение (игнорируем регистр)
-                            if (studentAnswer.ToLower() == correctAnswer.ToLower()) correctAnswers++;
-                            break;
+                            case 2: // Текст: Точное совпадение (игнорируем регистр)
+                                if (studentAnswer.ToLower() == correctAnswer.ToLower()) correctAnswers++;
+                                break;
 
-                        case 3: // Текст: Ключевые слова (если хотя бы одно слово есть в ответе)
-                            var keywords = correctAnswer.Split(',').Select(k => k.Trim().ToLower());
-                            if (keywords.Any(k => studentAnswer.ToLower().Contains(k))) correctAnswers++;
-                            break;
+                            case 3: // Текст: Ключевые слова (если хотя бы одно слово есть в ответе)
+                                var keywords = correctAnswer.Split(',').Select(k => k.Trim().ToLower());
+                                if (keywords.Any(k => studentAnswer.ToLower().Contains(k))) correctAnswers++;
+                                break;
+                        }
                     }
                 }
             }
@@ -96,7 +106,7 @@ namespace distant.Controllers
                 if (percentage >= 85) finalGrade = 5;
                 else if (percentage >= 70) finalGrade = 4;  // Четверка от 70%
                 else if (percentage >= 50) finalGrade = 3;
-                else finalGrade = 2;                        // Двойка только если меньше 50%                       
+                else finalGrade = 2;                        // Двойка только если меньше 50%                        
             }
 
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -105,7 +115,7 @@ namespace distant.Controllers
             var result = new Result
             {
                 TestId = testId,
-                Score = finalGrade, // Теперь Score хранит оценку (2, 3, 4 или 5)
+                Score = finalGrade,
                 AttemptDate = DateTime.Now,
                 StudentId = userIdString
             };
